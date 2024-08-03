@@ -16,8 +16,8 @@
           {
             "company": "Tech Solutions Inc.",
             "position": "Software Developer",
-            "startDate": "2020-01-01",
-            "endDate": "2023-01-01",
+            "startDate": "2023-08-03T14:06:22.533237",
+            "endDate": "2024-08-03T14:06:22.533237",
             "responsibilities": [
               "Developed and maintained web applications using React and Node.js.",
               "Collaborated with cross-functional teams to deliver high-quality software solutions.",
@@ -29,7 +29,7 @@
           {
             "institution": "State University",
             "degree": "B.Sc. Computer Science",
-            "graduationDate": "2019-05-01"
+            "graduationDate": "2024-08-03T14:06:22.533237"
           }
         ],
         "projects": [
@@ -78,7 +78,7 @@
           {
             "name": "Certified JavaScript Developer",
             "organization": "Coursera",
-            "date": "2022-01-01",
+            "date": "2024-08-03T14:06:22.533237",
             "verificationLink": "http://link"
           }
         ],
@@ -105,8 +105,8 @@
           {
             "company": "Tech Solutions Inc.",
             "position": "Software Developer",
-            "startDate": "2020-01-01",
-            "endDate": "2023-01-01",
+            "startDate": "2024-08-03T14:06:22.533237",
+            "endDate": "2024-08-03T14:06:22.533237",
             "responsibilities": [
               "Developed and maintained web applications using React and Node.js.",
               "Collaborated with cross-functional teams to deliver high-quality software solutions.",
@@ -118,7 +118,7 @@
           {
             "institution": "State University",
             "degree": "B.Sc. Computer Science",
-            "graduationDate": "2019-05-01"
+            "graduationDate": "2024-08-03T14:06:22.533237"
           }
         ],
         "projects": [
@@ -167,7 +167,7 @@
           {
             "name": "Certified JavaScript Developer",
             "organization": "Coursera",
-            "date": "2022-01-01",
+            "date": "2024-08-03T14:06:22.533237",
             "verificationLink": "http://link"
           }
         ],

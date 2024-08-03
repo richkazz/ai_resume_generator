@@ -132,8 +132,9 @@ class WorkExperience extends HiveObject {
       company: map['company'],
       position: map['position'],
       startDate:
-          map['startDate'] != null ? DateTime.parse(map['startDate']) : null,
-      endDate: map['endDate'] != null ? DateTime.parse(map['endDate']) : null,
+          map['startDate'] != null ? DateTime.tryParse(map['startDate']) : null,
+      endDate:
+          map['endDate'] != null ? DateTime.tryParse(map['endDate']) : null,
       responsibilities: List<String>.from(map['responsibilities'] ?? []),
     );
   }
@@ -170,7 +171,7 @@ class Education extends HiveObject {
       institution: map['institution'],
       degree: map['degree'],
       graduationDate: map['graduationDate'] != null
-          ? DateTime.parse(map['graduationDate'])
+          ? DateTime.tryParse(map['graduationDate'])
           : null,
     );
   }
@@ -249,7 +250,7 @@ class Certification extends HiveObject {
     return Certification(
       name: map['name'],
       organization: map['organization'],
-      date: map['date'] != null ? DateTime.parse(map['date']) : null,
+      date: map['date'] != null ? DateTime.tryParse(map['date']) : null,
       verificationLink: map['verificationLink'],
     );
   }
