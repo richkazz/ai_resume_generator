@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/models/resume.dart';
+import 'package:myapp/services/api_service.dart';
 import 'package:myapp/services/resume_service.dart';
 import 'package:myapp/util/resume_to_pdf.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class ResumePreview extends StatelessWidget {
@@ -26,6 +30,10 @@ class ResumePreview extends StatelessWidget {
 
   Future<void> _generatePDF(BuildContext context, Resume resume) async {
     await ResumeToPDF().generatePDF(resume);
+  }
+
+  Future<void> _generateDOCX(BuildContext context, Resume resume) async {
+    await ResumeToDOCX.generateDOCX(resume);
   }
 
   Widget _buildInfoRow(IconData icon, String text) {
@@ -131,6 +139,10 @@ class ResumePreview extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: () => _generatePDF(context, resume),
+          ),
+          IconButton(
+            icon: const Icon(Icons.document_scanner),
+            onPressed: () => _generateDOCX(context, resume),
           ),
         ],
       ),
