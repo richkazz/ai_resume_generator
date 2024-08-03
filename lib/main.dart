@@ -17,7 +17,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
             create: (_) => ResumeService(
-                databaseService, GeminiService(gemini: Gemini.instance))),
+                databaseService, GeminiService(gemini: Gemini.instance))
+              ..loadResume()),
       ],
       child: MyApp(),
     ),
