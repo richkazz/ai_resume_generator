@@ -38,7 +38,7 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
           ElevatedButton.icon(
             onPressed: _pickFile,
             icon: const Icon(Icons.upload_file),
-            label: const Text('Upload Resume (PDF/DOC)'),
+            label: const Text('Upload Resume (DOC)'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
