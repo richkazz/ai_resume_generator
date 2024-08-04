@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/models/resume.dart';
 import 'package:myapp/services/resume_service.dart';
+import 'package:myapp/spacing/app_spacing.dart';
 import 'package:myapp/util/resume_to_pdf.dart';
 import 'package:provider/provider.dart';
 
@@ -275,7 +276,12 @@ class ResumePreview extends StatelessWidget {
             // Profile
             if (resume.profile != null) ...[
               _buildSectionTitle('Profile'),
-              Text(resume.profile!, style: const TextStyle(fontSize: 16)),
+              Card(
+                  child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child:
+                    Text(resume.profile!, style: const TextStyle(fontSize: 16)),
+              )),
             ],
 
             // Certifications

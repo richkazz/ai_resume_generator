@@ -19,18 +19,18 @@ class GeminiService {
     prompt = prompt.replaceFirst('job_description', jobDescription);
     final expectedOutPut =
         json.encode(jsonResult['resume_generation']['expected_output']);
-    final respnse =
+    final response =
         await _gemini.text('$prompt\n\nOutput Format: $expectedOutPut');
 
-    if (respnse?.output == null) {
+    if (response?.output == null) {
       return null;
     }
-    final indexofOpenBracket = respnse!.output!.indexOf('{');
-    final indexofCloseBracket = respnse.output!.lastIndexOf('}');
-    final formatedOutput =
-        respnse.output!.substring(indexofOpenBracket, indexofCloseBracket + 1);
-    log(formatedOutput);
-    final resume = Resume.fromJson(formatedOutput);
+    final indexOpenBracket = response!.output!.indexOf('{');
+    final indexCloseBracket = response.output!.lastIndexOf('}');
+    final formattedOutput =
+        response.output!.substring(indexOpenBracket, indexCloseBracket + 1);
+    log(formattedOutput);
+    final resume = Resume.fromJson(formattedOutput);
     return resume;
   }
 
@@ -50,18 +50,18 @@ class GeminiService {
     prompt = prompt.replaceFirst('resume_text', text);
     final expectedOutPut =
         json.encode(jsonResult['resume_extraction']['expected_output']);
-    final respnse =
+    final response =
         await _gemini.text('$prompt\n\nExpected Output: $expectedOutPut');
 
-    if (respnse?.output == null) {
+    if (response?.output == null) {
       return null;
     }
-    final indexofOpenBracket = respnse!.output!.indexOf('{');
-    final indexofCloseBracket = respnse.output!.lastIndexOf('}');
-    final formatedOutput =
-        respnse.output!.substring(indexofOpenBracket, indexofCloseBracket + 1);
-    log(formatedOutput);
-    final resume = Resume.fromJson(formatedOutput);
+    final indexOpenBracket = response!.output!.indexOf('{');
+    final indexCloseBracket = response.output!.lastIndexOf('}');
+    final formattedOutput =
+        response.output!.substring(indexOpenBracket, indexCloseBracket + 1);
+    log(formattedOutput);
+    final resume = Resume.fromJson(formattedOutput);
     return resume;
   }
 }

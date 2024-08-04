@@ -89,7 +89,7 @@
       }      
     },
     "resume_generation": {
-      "prompt": "Given the following resume and job description, generate a tailored resume that highlights relevant skills and experience for the job. Resume: {resume_json}. Job Description: {job_description}",
+      "prompt": "Given the following resume and job description, generate a tailored resume that highlights relevant skills and experience for the job. Rewrite the information if necessary to better sell the resume. Sound human. Resume: {resume_json}. Job Description: {job_description}",
       "expected_output":{
         "name": "John Doe",
         "address": "123 Main Street, Anytown, USA",
