@@ -15,8 +15,7 @@ class FilePickerUtil {
   static Future<void> pickAndParseResumeProfile(BuildContext context) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
+        type: FileType.any,
       );
       if (result == null) {
         // User canceled the picker
