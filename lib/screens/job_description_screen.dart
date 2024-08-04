@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:myapp/screens/preview_screen.dart';
 import 'package:myapp/services/resume_service.dart';
@@ -90,6 +92,7 @@ class _JobDescriptionScreenState extends State<JobDescriptionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error generating resume: $error')),
         );
+        log('$error');
       });
     }
   }

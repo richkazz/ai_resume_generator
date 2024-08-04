@@ -19,8 +19,8 @@ class GeminiService {
     prompt = prompt.replaceFirst('job_description', jobDescription);
     final expectedOutPut =
         json.encode(jsonResult['resume_generation']['expected_output']);
-    final response =
-        await _gemini.text('$prompt\n\nOutput Format: $expectedOutPut');
+    final response = await _gemini.text(
+        '$prompt\n\nOutput Format: $expectedOutPut .  return exactly the output json format.');
 
     if (response?.output == null) {
       return null;
@@ -69,7 +69,6 @@ class GeminiService {
 Future<Map<String, dynamic>> readJsonFromAssets(String filePath) async {
   try {
     final jsonString = await rootBundle.loadString('assets/$filePath');
-    log(jsonString);
     return jsonDecode(jsonString) as Map<String, dynamic>;
   } catch (e) {
     log('Error reading JSON file: $e');
