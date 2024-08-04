@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -35,6 +36,21 @@ Future<void> shareFile(String fileName, dynamic bytes) async {
   if (result.status == ShareResultStatus.success ||
       result.status == ShareResultStatus.dismissed) {
     await File('${directory.path}/$fileName').delete();
+  }
+}
+
+class ExportJsonProfile {
+  Future<void> generateJsonProfile(Resume resume) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/${resume.name} Profile.json';
+    await File(filePath).writeAsString(jsonEncode(resume.toJson()));
+    final result =
+        await Share.shareXFiles([XFile(filePath)], text: 'Your resume');
+
+    if (result.status == ShareResultStatus.success ||
+        result.status == ShareResultStatus.dismissed) {
+      await File(filePath).delete();
+    }
   }
 }
 

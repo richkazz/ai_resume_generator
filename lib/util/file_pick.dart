@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:myapp/models/resume.dart';
 import 'package:myapp/services/gemini_service.dart';
 import 'package:myapp/services/resume_service.dart';
 import 'package:docx_to_text/docx_to_text.dart';
@@ -9,6 +12,35 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 
 class FilePickerUtil {
+  static Future<void> pickAndParseResumeProfile(BuildContext context) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      if (result == null) {
+        // User canceled the picker
+        return;
+      }
+      final resumeService = Provider.of<ResumeService>(context, listen: false);
+      File file = File(result.files.single.path!);
+      final bytes = await file.readAsBytes();
+      final jsonString = utf8.decode(bytes);
+      final resume = Resume.fromJson(jsonString);
+      // Save the resume using ResumeService
+      resumeService.saveResume(resume);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Resume successfully parsed and saved!')),
+      );
+    } catch (e) {
+      // Handle errors appropriately
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick and parse resume: $e')),
+      );
+    }
+  }
+
   static Future<void> pickAndParseResume(BuildContext context) async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(

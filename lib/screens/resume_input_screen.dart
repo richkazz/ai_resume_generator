@@ -33,13 +33,28 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
 
   List<Widget> _buildView() {
     return [
-      ElevatedButton.icon(
-        onPressed: _pickFile,
-        icon: const Icon(Icons.upload_file),
-        label: const Text('Upload Resume (PDF/DOC)'),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        ),
+      Row(
+        children: [
+          ElevatedButton.icon(
+            onPressed: _pickFile,
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Upload Resume (PDF/DOC)'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            ),
+          ),
+          const SizedBox(
+            width: AppSpacing.lg,
+          ),
+          ElevatedButton.icon(
+            onPressed: _pickProfileFile,
+            icon: const Icon(Icons.upload_file),
+            label: const Text('Upload Json profile'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            ),
+          ),
+        ],
       ),
       const SizedBox(height: 24),
       BuildSection('Personal Information', [
@@ -217,6 +232,10 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
 
   Future<void> _pickFile() async {
     await FilePickerUtil.pickAndParseResume(context);
+  }
+
+  Future<void> _pickProfileFile() async {
+    await FilePickerUtil.pickAndParseResumeProfile(context);
   }
 
   List<Widget> _buildProjectList() {

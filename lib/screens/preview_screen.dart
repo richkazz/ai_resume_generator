@@ -28,6 +28,12 @@ class ResumePreview extends StatelessWidget {
     await ResumeToPDF().generatePDF(resume);
   }
 
+  Future<void> _exportProfile(BuildContext context, Resume resume) async {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Exporting your profile')));
+    await ExportJsonProfile().generateJsonProfile(resume);
+  }
+
   Future<void> _generateDOCX(BuildContext context, Resume resume) async {
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text('Generating document')));
@@ -134,6 +140,13 @@ class ResumePreview extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Resume Preview'),
         actions: [
+          Tooltip(
+            message: 'Export profile as json',
+            child: IconButton(
+              icon: const Icon(Icons.import_export),
+              onPressed: () => _exportProfile(context, resume),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: () => _generatePDF(context, resume),
