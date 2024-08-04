@@ -27,26 +27,9 @@ class _SkillsListWidgetState extends State<SkillsListWidget> {
   }
 
   Widget _buildSkillItem(int index, String skill) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade300, Colors.blue.shade600],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.blue.shade200,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: _isEditMode
-          ? _buildEditableSkill(index, skill)
-          : _buildViewableSkill(skill),
+    return Chip(
+      label: Text(skill),
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     );
   }
 
@@ -55,34 +38,10 @@ class _SkillsListWidgetState extends State<SkillsListWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
         skill,
-        style:
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.bold),
       ),
-    );
-  }
-
-  Widget _buildEditableSkill(int index, String skill) {
-    return Row(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: TextFormField(
-              initialValue: skill,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 12),
-              ),
-              onChanged: (value) => _editableSkills[index] = value,
-            ),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete, color: Colors.white),
-          onPressed: () => setState(() => _editableSkills.removeAt(index)),
-        ),
-      ],
     );
   }
 

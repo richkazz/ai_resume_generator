@@ -4,8 +4,8 @@ import 'package:myapp/services/resume_service.dart';
 import 'package:provider/provider.dart';
 
 class JobDescriptionScreen extends StatefulWidget {
-  const JobDescriptionScreen({super.key});
-
+  const JobDescriptionScreen({super.key, required this.noResume});
+  final VoidCallback noResume;
   @override
   _JobDescriptionScreenState createState() => _JobDescriptionScreenState();
 }
@@ -16,6 +16,16 @@ class _JobDescriptionScreenState extends State<JobDescriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _resume = context.watch<ResumeService>().resume;
+    if (_resume == null) {
+      return Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.upload_file),
+          onPressed: widget.noResume,
+          label: const Text('Add Resume'),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Job Description')),
       body: SingleChildScrollView(

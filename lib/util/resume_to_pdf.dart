@@ -1,10 +1,10 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:myapp/models/resume.dart';
 import 'package:myapp/services/api_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ResumeToDOCX {
@@ -13,26 +13,28 @@ class ResumeToDOCX {
         ResumeApiService(baseUrl: 'https://docxfilegenerator.onrender.com');
     try {
       final documentBytes = await apiService.generateResume(resume);
-      final directory = await getApplicationDocumentsDirectory();
-      await File('${directory.path}/resume.docx').writeAsBytes(documentBytes);
-      final result = await Share.shareXFiles(
-          [XFile('${directory.path}/resume.docx')],
-          text: 'Your resume');
-
-      if (result.status == ShareResultStatus.success ||
-          result.status == ShareResultStatus.dismissed) {
-        await File('${directory.path}/resume.docx').delete();
-      }
+      await shareFile('${resume.name}.docx', documentBytes);
     } on ApiException catch (e) {
       // Handle API-specific errors
-      print('API error: $e');
+      log('API error: $e');
     } catch (e) {
       // Handle other errors
-      print('Unexpected error: $e');
+      log('Unexpected error: $e');
     }
 
-// Don't forget to dispose when you're done
     apiService.dispose();
+  }
+}
+
+Future<void> shareFile(String fileName, dynamic bytes) async {
+  final directory = await getApplicationDocumentsDirectory();
+  await File('${directory.path}/$fileName').writeAsBytes(bytes);
+  final result = await Share.shareXFiles([XFile('${directory.path}/$fileName')],
+      text: 'Your resume');
+
+  if (result.status == ShareResultStatus.success ||
+      result.status == ShareResultStatus.dismissed) {
+    await File('${directory.path}/$fileName').delete();
   }
 }
 
@@ -56,9 +58,7 @@ class ResumeToPDF {
         ],
       ),
     );
-
-    // Save the PDF
-    await Printing.sharePdf(bytes: await pdf.save(), filename: 'resume.pdf');
+    await shareFile('${resume.name}.pdf', await pdf.save());
   }
 
   pw.Widget _buildHeader(Resume resume) {

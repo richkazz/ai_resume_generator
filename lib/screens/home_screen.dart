@@ -4,37 +4,53 @@ import 'package:myapp/screens/job_description_screen.dart';
 import 'package:myapp/screens/preview_screen.dart';
 import 'package:myapp/screens/resume_input_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+  void _pageChange(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Resume Builder')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: IndexedStack(
+          index: _currentIndex,
           children: [
-            ElevatedButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const ResumeInputScreen())),
-              child: const Text('Input Resume'),
+            PreviewScreen(
+              noResume: () {
+                _pageChange(1);
+              },
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const JobDescriptionScreen())),
-              child: const Text('Enter Job Description'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const PreviewScreen())),
-              child: const Text('Preview Resume'),
+            const ResumeInputScreen(),
+            JobDescriptionScreen(
+              noResume: () {
+                _pageChange(1);
+              },
             ),
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _pageChange,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.preview), label: 'Preview Resume'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.upload_file), label: 'Input Resume'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.work), label: 'Generate Resume'),
+          ]),
     );
   }
 }

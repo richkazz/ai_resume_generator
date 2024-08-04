@@ -1,18 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/models/resume.dart';
-import 'package:myapp/services/api_service.dart';
 import 'package:myapp/services/resume_service.dart';
 import 'package:myapp/util/resume_to_pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class ResumePreview extends StatelessWidget {
   final Resume resume;
 
-  const ResumePreview({Key? key, required this.resume}) : super(key: key);
+  const ResumePreview({super.key, required this.resume});
 
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -33,6 +29,8 @@ class ResumePreview extends StatelessWidget {
   }
 
   Future<void> _generateDOCX(BuildContext context, Resume resume) async {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Generating document')));
     await ResumeToDOCX.generateDOCX(resume);
   }
 
@@ -175,7 +173,8 @@ class ResumePreview extends StatelessWidget {
                 children: resume.skills
                     .map((skill) => Chip(
                           label: Text(skill),
-                          backgroundColor: Colors.blueAccent.shade100,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
                         ))
                     .toList(),
               ),
@@ -238,8 +237,9 @@ class ResumePreview extends StatelessWidget {
                             children: project.technologies
                                 .map((tech) => Chip(
                                       label: Text(tech),
-                                      backgroundColor:
-                                          Colors.blueAccent.shade100,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primaryContainer,
                                     ))
                                 .toList(),
                           ),
@@ -292,7 +292,10 @@ class ResumePreview extends StatelessWidget {
                             const SizedBox(height: 8),
                             if (cert.verificationLink != null)
                               Text(cert.verificationLink!,
-                                  style: const TextStyle(color: Colors.blue)),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary)),
                           ],
                         ),
                       ),
@@ -349,14 +352,14 @@ class ListOfStringItemWidget extends StatelessWidget {
 }
 
 class PreviewScreen extends StatefulWidget {
-  const PreviewScreen({super.key});
-
+  const PreviewScreen({super.key, required this.noResume});
+  final VoidCallback noResume;
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
-  late Resume _resume;
+  late Resume? _resume;
   @override
   void initState() {
     super.initState();
@@ -364,9 +367,18 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _resume = context.watch<ResumeService>().resume ?? Resume();
+    _resume = context.watch<ResumeService>().resume;
+    if (_resume == null) {
+      return Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.upload_file),
+          onPressed: widget.noResume,
+          label: const Text('Add Resume'),
+        ),
+      );
+    }
     return ResumePreview(
-      resume: _resume,
+      resume: _resume ?? Resume(),
     );
   }
 }
