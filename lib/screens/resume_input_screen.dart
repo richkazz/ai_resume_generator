@@ -33,7 +33,9 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
 
   List<Widget> _buildView() {
     return [
-      Row(
+      Wrap(
+        spacing: AppSpacing.lg,
+        runSpacing: AppSpacing.lg,
         children: [
           ElevatedButton.icon(
             onPressed: _pickFile,
@@ -42,9 +44,6 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
-          ),
-          const SizedBox(
-            width: AppSpacing.lg,
           ),
           ElevatedButton.icon(
             onPressed: _pickProfileFile,
