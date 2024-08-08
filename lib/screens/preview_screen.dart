@@ -4,13 +4,33 @@ import 'package:myapp/models/resume.dart';
 import 'package:myapp/services/resume_service.dart';
 import 'package:myapp/spacing/app_spacing.dart';
 import 'package:myapp/util/resume_to_pdf.dart';
+import 'package:myapp/widgets/side_navigation_button.dart';
 import 'package:provider/provider.dart';
 
-class ResumePreview extends StatelessWidget {
+class ResumePreview extends StatefulWidget {
   final Resume resume;
 
   const ResumePreview({super.key, required this.resume});
 
+  @override
+  State<ResumePreview> createState() => _ResumePreviewState();
+}
+
+class _ResumePreviewState extends State<ResumePreview> {
+  final ScrollController _scrollController = ScrollController();
+  final List<SectionItem> _sections = [
+    SectionItem(key: GlobalKey(), icon: Icons.person), // Personal Information
+    SectionItem(key: GlobalKey(), icon: Icons.flag), // Objective
+    SectionItem(key: GlobalKey(), icon: Icons.account_circle), // Profile
+    SectionItem(key: GlobalKey(), icon: Icons.star), // Skills
+    SectionItem(key: GlobalKey(), icon: Icons.work), // Work Experience
+    SectionItem(key: GlobalKey(), icon: Icons.school), // Education
+    SectionItem(key: GlobalKey(), icon: Icons.folder), // Projects
+    SectionItem(key: GlobalKey(), icon: Icons.verified_user), // Certifications
+    SectionItem(
+        key: GlobalKey(), icon: Icons.contact_mail), // Contact Information
+    SectionItem(key: GlobalKey(), icon: Icons.group), // Referee
+  ];
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -65,7 +85,7 @@ class ResumePreview extends StatelessWidget {
   }
 
   List<Widget> _buildWorkExperienceList() {
-    return resume.workExperience.map((workExperience) {
+    return widget.resume.workExperience.map((workExperience) {
       return Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         elevation: 4.0,
@@ -135,6 +155,21 @@ class ResumePreview extends StatelessWidget {
     return Text('$startDate - $endDate');
   }
 
+  Widget _buildSection(GlobalKey key, String title, List<Widget> children) {
+    return Container(
+      key: key,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(title),
+          const SizedBox(height: 8),
+          ...children,
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,197 +180,245 @@ class ResumePreview extends StatelessWidget {
             message: 'Export profile as json',
             child: IconButton(
               icon: const Icon(Icons.import_export),
-              onPressed: () => _exportProfile(context, resume),
+              onPressed: () => _exportProfile(context, widget.resume),
             ),
           ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
-            onPressed: () => _generatePDF(context, resume),
+            onPressed: () => _generatePDF(context, widget.resume),
           ),
           IconButton(
             icon: const Icon(Icons.document_scanner),
-            onPressed: () => _generateDOCX(context, resume),
+            onPressed: () => _generateDOCX(context, widget.resume),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Personal Information
-            _buildSectionTitle('Personal Information'),
-            if (resume.name != null) _buildInfoRow(Icons.person, resume.name!),
-            if (resume.address != null)
-              _buildInfoRow(Icons.location_on, resume.address!),
-            if (resume.phoneNumber != null)
-              _buildInfoRow(Icons.phone, resume.phoneNumber!),
-            if (resume.email != null) _buildInfoRow(Icons.email, resume.email!),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSection(_sections[0].key, 'Personal Information', [
+                  // Personal Information
+                  if (widget.resume.name != null)
+                    _buildInfoRow(Icons.person, widget.resume.name!),
+                  if (widget.resume.address != null)
+                    _buildInfoRow(Icons.location_on, widget.resume.address!),
+                  if (widget.resume.phoneNumber != null)
+                    _buildInfoRow(Icons.phone, widget.resume.phoneNumber!),
+                  if (widget.resume.email != null)
+                    _buildInfoRow(Icons.email, widget.resume.email!),
 
-            // Objective
-            if (resume.objective != null) ...[
-              _buildSectionTitle('Objective'),
-              Text(resume.objective!, style: const TextStyle(fontSize: 16)),
-            ],
-
-            // Skills
-            if (resume.skills.isNotEmpty) ...[
-              _buildSectionTitle('Skills'),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 4.0,
-                children: resume.skills
-                    .map((skill) => Chip(
-                          label: Text(skill),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                        ))
-                    .toList(),
-              ),
-            ],
-
-            // Work Experience
-            if (resume.workExperience.isNotEmpty) ...[
-              _buildSectionTitle('Work Experience'),
-              ..._buildWorkExperienceList()
-            ],
-
-            // Education
-            if (resume.education.isNotEmpty) ...[
-              _buildSectionTitle('Education'),
-              ...resume.education.map((edu) => Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
+                  // Objective
+                  if (widget.resume.objective != null) ...[
+                    _buildSection(_sections[1].key, 'Objective', [
+                      Text(widget.resume.objective!,
+                          style: const TextStyle(fontSize: 16)),
+                    ]),
+                  ],
+                ]),
+                // Profile
+                if (widget.resume.profile != null) ...[
+                  _buildSection(_sections[2].key, 'Profile', [
+                    Card(
+                        child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Text(widget.resume.profile!,
+                          style: const TextStyle(fontSize: 16)),
+                    )),
+                  ]),
+                ],
+                // Skills
+                if (widget.resume.skills.isNotEmpty) ...[
+                  _buildSection(_sections[3].key, 'Skills', [
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 4.0,
+                      children: widget.resume.skills
+                          .map((skill) => Chip(
+                                label: Text(skill),
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                              ))
+                          .toList(),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildListTile(
-                              edu.institution ?? 'N/A', edu.degree ?? 'N/A'),
-                          _buildDateRange(null, edu.graduationDate),
-                        ],
-                      ),
+                  ]),
+                ],
+
+                // Work Experience
+                if (widget.resume.workExperience.isNotEmpty) ...[
+                  _buildSection(_sections[4].key, 'Work Experience',
+                      _buildWorkExperienceList()),
+                ],
+
+                // Education
+                if (widget.resume.education.isNotEmpty) ...[
+                  _buildSection(
+                    _sections[5].key,
+                    'Education',
+                    widget.resume.education
+                        .map((edu) => Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8.0),
+                              elevation: 4.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildListTile(edu.institution ?? 'N/A',
+                                        edu.degree ?? 'N/A'),
+                                    _buildDateRange(null, edu.graduationDate),
+                                  ],
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  )
+                ],
+
+                // Projects
+                if (widget.resume.projects.isNotEmpty) ...[
+                  _buildSection(
+                    _sections[6].key,
+                    'Projects',
+                    widget.resume.projects
+                        .map((project) => Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8.0),
+                              elevation: 4.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(project.name ?? 'N/A',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18)),
+                                    const SizedBox(height: 8),
+                                    if (project.description != null)
+                                      Text(project.description!,
+                                          style: const TextStyle(fontSize: 16)),
+                                    const SizedBox(height: 8),
+                                    Wrap(
+                                      spacing: 8.0,
+                                      runSpacing: 4.0,
+                                      children: project.technologies
+                                          .map((tech) => Chip(
+                                                label: Text(tech),
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primaryContainer,
+                                              ))
+                                          .toList(),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    if (project.keyFeatures.isNotEmpty)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: project.keyFeatures
+                                            .map((feature) =>
+                                                ListOfStringItemWidget(
+                                                  item: feature,
+                                                ))
+                                            .toList(),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ],
+
+                // Certifications
+                if (widget.resume.certifications.isNotEmpty) ...[
+                  _buildSection(
+                    _sections[7].key,
+                    'Certifications',
+                    widget.resume.certifications
+                        .map((cert) => SizedBox(
+                              width: double.infinity,
+                              child: Card(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                elevation: 4.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(cert.name ?? 'N/A',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18)),
+                                      const SizedBox(height: 8),
+                                      Text(cert.organization ?? 'N/A',
+                                          style: const TextStyle(fontSize: 16)),
+                                      const SizedBox(height: 8),
+                                      _buildDateRange(null, cert.date),
+                                      const SizedBox(height: 8),
+                                      if (cert.verificationLink != null)
+                                        Text(cert.verificationLink!,
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ],
+
+                // Contact Information
+                if (widget.resume.contactInformation != null) ...[
+                  if (widget.resume.contactInformation!.linkedin != null)
+                    _buildSection(
+                      _sections[8].key,
+                      'Contact Information',
+                      [
+                        _buildInfoRow(Icons.link,
+                            widget.resume.contactInformation!.linkedin!)
+                      ],
                     ),
-                  )),
-            ],
+                ],
 
-            // Projects
-            if (resume.projects.isNotEmpty) ...[
-              _buildSectionTitle('Projects'),
-              ...resume.projects.map((project) => Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0),
-                    elevation: 4.0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(project.name ?? 'N/A',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18)),
-                          const SizedBox(height: 8),
-                          if (project.description != null)
-                            Text(project.description!,
-                                style: const TextStyle(fontSize: 16)),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 4.0,
-                            children: project.technologies
-                                .map((tech) => Chip(
-                                      label: Text(tech),
-                                      backgroundColor: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer,
-                                    ))
-                                .toList(),
-                          ),
-                          const SizedBox(height: 8),
-                          if (project.keyFeatures.isNotEmpty)
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: project.keyFeatures
-                                  .map((feature) => ListOfStringItemWidget(
-                                        item: feature,
-                                      ))
-                                  .toList(),
-                            ),
-                        ],
-                      ),
-                    ),
-                  )),
-            ],
-
-            // Profile
-            if (resume.profile != null) ...[
-              _buildSectionTitle('Profile'),
-              Card(
-                  child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child:
-                    Text(resume.profile!, style: const TextStyle(fontSize: 16)),
-              )),
-            ],
-
-            // Certifications
-            if (resume.certifications.isNotEmpty) ...[
-              _buildSectionTitle('Certifications'),
-              ...resume.certifications.map((cert) => SizedBox(
-                    width: double.infinity,
-                    child: Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(cert.name ?? 'N/A',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18)),
-                            const SizedBox(height: 8),
-                            Text(cert.organization ?? 'N/A',
-                                style: const TextStyle(fontSize: 16)),
-                            const SizedBox(height: 8),
-                            _buildDateRange(null, cert.date),
-                            const SizedBox(height: 8),
-                            if (cert.verificationLink != null)
-                              Text(cert.verificationLink!,
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )),
-            ],
-
-            // Contact Information
-            if (resume.contactInformation != null) ...[
-              _buildSectionTitle('Contact Information'),
-              if (resume.contactInformation!.linkedin != null)
-                _buildInfoRow(Icons.link, resume.contactInformation!.linkedin!),
-            ],
-
-            // Referee
-            if (resume.referee != null) ...[
-              _buildSectionTitle('Referee'),
-              Text(resume.referee!, style: const TextStyle(fontSize: 16)),
-            ],
-          ],
-        ),
+                // Referee
+                if (widget.resume.referee != null) ...[
+                  _buildSection(
+                    _sections[9].key,
+                    'Referee',
+                    [
+                      Text(widget.resume.referee!,
+                          style: const TextStyle(fontSize: 16))
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          SideNavigationButton(
+            sections: _sections,
+            scrollController: _scrollController,
+          ),
+        ],
       ),
     );
   }

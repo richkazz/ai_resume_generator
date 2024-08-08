@@ -9,6 +9,7 @@ import 'package:myapp/widgets/chip_input.dart';
 import 'package:myapp/widgets/custom_delete_dialog.dart';
 import 'package:myapp/widgets/date_picker_form_field.dart';
 import 'package:myapp/widgets/input_text_field.dart';
+import 'package:myapp/widgets/side_navigation_button.dart';
 import 'package:myapp/widgets/work_experience.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,18 @@ class ResumeInputScreen extends StatefulWidget {
 class _ResumeInputScreenState extends State<ResumeInputScreen> {
   final _formKey = GlobalKey<FormState>();
   late Resume _resume;
+  final ScrollController _scrollController = ScrollController();
+  final List<SectionItem> _sections = [
+    SectionItem(key: GlobalKey(), icon: Icons.person), // Personal Information
+    SectionItem(key: GlobalKey(), icon: Icons.flag), // Objective
+    SectionItem(key: GlobalKey(), icon: Icons.account_circle), // Profile
+    SectionItem(key: GlobalKey(), icon: Icons.star), // Skills
+    SectionItem(key: GlobalKey(), icon: Icons.work), // Work Experience
+    SectionItem(key: GlobalKey(), icon: Icons.school), // Education
+    SectionItem(key: GlobalKey(), icon: Icons.folder), // Projects
+    SectionItem(key: GlobalKey(), icon: Icons.verified_user), // Certifications
+    SectionItem(key: GlobalKey(), icon: Icons.group), // Referee
+  ];
 
   @override
   void initState() {
@@ -56,7 +69,7 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
         ],
       ),
       const SizedBox(height: 24),
-      BuildSection('Personal Information', [
+      _buildSection(_sections[0].key, 'Personal Information', [
         _buildTextField(
             'Full Name', _resume.name, (value) => _resume.name = value),
         _buildTextField(
@@ -71,14 +84,17 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
             (value) => _resume.contactInformation =
                 ContactInformation(linkedin: value)),
       ]),
-      _buildTextField(
-          'Objective', _resume.objective, (value) => _resume.objective = value,
-          maxLines: 3),
-      _buildTextField(
-          'Profile', _resume.profile, (value) => _resume.profile = value,
-          maxLines: 3),
-      const SizedBox(height: 16),
-      BuildSection('Skills', [
+      _buildSection(_sections[1].key, 'Objective', [
+        _buildTextField('Objective', _resume.objective,
+            (value) => _resume.objective = value,
+            maxLines: 3),
+      ]),
+      _buildSection(_sections[2].key, 'Profile', [
+        _buildTextField(
+            'Profile', _resume.profile, (value) => _resume.profile = value,
+            maxLines: 3),
+      ]),
+      _buildSection(_sections[3].key, 'Skills', [
         ChipInput(
           label: 'Skill',
           useAsLabel: false,
@@ -86,11 +102,10 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
           onChanged: (values) => _resume.skills = values,
         ),
       ]),
-      const HeightTextFieldSpacer(),
-      _buildSection('Work Experience', [
+      _buildSection(_sections[4].key, 'Work Experience', [
         WorkExperienceWidget(_resume),
       ]),
-      _buildSection('Education', [
+      _buildSection(_sections[5].key, 'Education', [
         ..._buildEducationList(),
         ElevatedButton.icon(
           onPressed: _addEducation,
@@ -98,7 +113,7 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
           label: const Text('Add Education'),
         ),
       ]),
-      _buildSection('Projects', [
+      _buildSection(_sections[6].key, 'Projects', [
         ..._buildProjectList(),
         ElevatedButton.icon(
           onPressed: _addProject,
@@ -106,13 +121,19 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
           label: const Text('Add Project'),
         ),
       ]),
-      _buildSection('Certifications', [
+      _buildSection(_sections[7].key, 'Certifications', [
         CertificationList(
           certifications: _resume.certifications,
         ),
       ]),
-      _buildTextField(
-          'Referee', _resume.referee, (value) => _resume.referee = value),
+      _buildSection(
+        _sections[8].key,
+        'Referee',
+        [
+          _buildTextField(
+              'Referee', _resume.referee, (value) => _resume.referee = value),
+        ],
+      ),
       const SizedBox(height: 32),
       Center(
         child: ElevatedButton.icon(
@@ -145,29 +166,41 @@ class _ResumeInputScreenState extends State<ResumeInputScreen> {
             fillColor: Colors.grey[200],
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: _buildView(),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _buildView(),
+                ),
+              ),
             ),
-          ),
+            SideNavigationButton(
+              sections: _sections,
+              scrollController: _scrollController,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildSection(String title, List<Widget> children) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        ...children,
-        const SizedBox(height: 24),
-      ],
+  Widget _buildSection(GlobalKey key, String title, List<Widget> children) {
+    return Container(
+      key: key,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          ...children,
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 

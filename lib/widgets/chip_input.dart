@@ -38,8 +38,8 @@ class _ChipInputState extends State<ChipInput> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (!widget.useAsLabel)
-          Text(widget.label!, style: Theme.of(context).textTheme.titleSmall),
+        if (widget.useAsLabel)
+          Text(widget.label, style: Theme.of(context).textTheme.titleSmall),
         if (!widget.useAsLabel)
           const SizedBox(
             height: AppSpacing.md,

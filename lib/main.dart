@@ -12,6 +12,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Gemini.init(apiKey: EnvironmentVariables.geminiKey);
   final databaseService = await DatabaseService.initialize();
+  // final sample = await readJsonFromAssets('jsons/sampleresume.json');
+  // final samplelResume = Resume.fromMap(sample);
+  // await databaseService.saveResume(samplelResume);
   runApp(
     MultiProvider(
       providers: [
