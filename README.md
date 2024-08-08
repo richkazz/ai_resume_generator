@@ -1,6 +1,7 @@
 # AI-Powered Resume Builder
 
 An intelligent, cross-platform Flutter application that leverages the power of AI to create tailored resumes and cover letters.
+![image](https://github.com/user-attachments/assets/145558b0-bb64-4e3d-8fc8-5a8a052fd51a)
 
 ## Features
 
